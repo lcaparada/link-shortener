@@ -1,8 +1,8 @@
 // SERVICE
-export * from "./url.service";
+export * from "./url.mutations.service";
 
 // TYPES
-export * from "./url.types";
+export * from "./url.mutation.types";
 
 // USE CASES
 export * from "./useCases/useGenerateShortUrl";

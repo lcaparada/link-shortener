@@ -1,5 +1,8 @@
 import { apiRequest } from "@/services/api";
-import { GenerateShortURLParams, GenerateShortURLResult } from "./url.types";
+import {
+  GenerateShortURLParams,
+  GenerateShortURLResult,
+} from "./url.mutation.types";
 
 async function generateShortURL({
   originalUrl,
@@ -15,7 +18,6 @@ async function generateShortURL({
     return result;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.log(error.response);
     throw error?.response?.data?.message;
   }
 }

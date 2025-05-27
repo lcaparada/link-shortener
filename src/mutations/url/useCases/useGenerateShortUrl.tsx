@@ -1,9 +1,14 @@
+"use client";
+
 import { useMutation } from "@tanstack/react-query";
-import { GenerateShortURLParams, GenerateShortURLResult } from "../url.types";
-import { urlService } from "../url.service";
+import {
+  GenerateShortURLParams,
+  GenerateShortURLResult,
+} from "../url.mutation.types";
+import { urlService } from "../url.mutations.service";
 
 export function useGenerateShortUrl() {
   return useMutation<GenerateShortURLResult, Error, GenerateShortURLParams>({
-    mutationFn: urlService.generateShortURL,
+    mutationFn: (params) => urlService.generateShortURL(params),
   });
 }
