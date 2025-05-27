@@ -1,4 +1,6 @@
-import { URL } from "@/types/url.types";
+export type URL = {
+  shortUrl: string;
+};
 
 export type GenerateShortURLParams = {
   originalUrl: string;

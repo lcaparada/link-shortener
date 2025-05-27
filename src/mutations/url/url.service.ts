@@ -1,9 +1,7 @@
-"use server";
-
 import { apiRequest } from "@/services/api";
-import { GenerateShortURLParams, GenerateShortURLResult } from "./action.types";
+import { GenerateShortURLParams, GenerateShortURLResult } from "./url.types";
 
-export async function generateShortURL({
+async function generateShortURL({
   originalUrl,
 }: GenerateShortURLParams): Promise<GenerateShortURLResult> {
   try {
@@ -21,3 +19,7 @@ export async function generateShortURL({
     throw error?.response?.data?.message;
   }
 }
+
+export const urlService = {
+  generateShortURL,
+};

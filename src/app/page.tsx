@@ -4,17 +4,15 @@ import { Button, FormTextInput } from "@/components";
 import { useForm } from "react-hook-form";
 import { urlSchema, URLSchemaType } from "./url-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generateShortURL } from "./action";
 import { useState } from "react";
 import { Copy, CopyCheck } from "lucide-react";
 import { toast } from "sonner";
+import { useGenerateShortUrl } from "@/mutations";
 
 export default function Home() {
-  const [shortedURL, setShortedURL] = useState({
-    getting: false,
-    data: "",
-  });
   const [copied, setCopied] = useState(false);
+
+  const { data, mutateAsync, isPending } = useGenerateShortUrl();
 
   const form = useForm<URLSchemaType>({
     resolver: zodResolver(urlSchema),
@@ -25,24 +23,20 @@ export default function Home() {
   });
 
   async function handleCopy() {
-    if (shortedURL.data) {
-      await navigator.clipboard.writeText(shortedURL.data);
+    if (data) {
+      await navigator.clipboard.writeText(data.shortUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
   }
 
-  async function handleShortenURL(data: URLSchemaType) {
-    setShortedURL((prev) => ({ ...prev, getting: true }));
+  async function handleShortenURL(formData: URLSchemaType) {
     try {
-      const response = await generateShortURL(data);
-      setShortedURL({ data: response.shortUrl, getting: false });
+      await mutateAsync(formData);
       form.reset();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(`${error}`);
-    } finally {
-      setShortedURL((prev) => ({ ...prev, getting: false }));
     }
   }
 
@@ -59,9 +53,9 @@ export default function Home() {
           name={"originalUrl"}
           control={form.control}
         />
-        {shortedURL.data && (
+        {data?.shortUrl && (
           <div className="bg-zinc-100 p-6 rounded-lg items-center flex gap-x-5 justify-center">
-            <span className="font-bold text-black">{shortedURL.data}</span>
+            <span className="font-bold text-black">{data.shortUrl}</span>
             <button onClick={handleCopy}>
               {copied ? <CopyCheck color="green" /> : <Copy />}
             </button>
@@ -71,15 +65,19 @@ export default function Home() {
         <div className="w-full flex items-center justify-center">
           <Button
             text="Encurtar URL"
-            loading={shortedURL.getting}
-            disabled={!form.formState.isValid || shortedURL.getting}
+            loading={isPending}
+            disabled={!form.formState.isValid || isPending}
             onClick={form.handleSubmit(handleShortenURL)}
           />
         </div>
       </section>
 
       <section className="w-[700px] gap-y-10  flex  flex-col p-8  bg-white rounded-lg shadow-md">
-        <h2 className="text-3xl font-bold text-zinc-950">Relatório</h2>
+        <h2 className="text-2xl font-bold text-zinc-950">Suas URLs</h2>
+      </section>
+
+      <section className="w-[700px] gap-y-10  flex  flex-col p-8  bg-white rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-zinc-950">Relatório</h2>
       </section>
     </div>
   );
