@@ -49,6 +49,8 @@ export default function Home() {
     }
   }
 
+  const hasUrls = response && response.urls.length;
+
   return (
     <div className="min-h-screen w-full p-3  flex items-center justify-center bg-zinc-300">
       <div className="w-full flex flex-col gap-y-5  max-w-3xl items-center justify-center">
@@ -88,18 +90,30 @@ export default function Home() {
           {isLoading ? (
             <Skeleton className="flex w-full rounded-md h-[140px]" />
           ) : (
-            <div className="flex flex-col gap-y-3">
-              {response &&
+            <div className="flex flex-col items-center gap-y-3">
+              {hasUrls ? (
                 response.urls.map((url, index) => (
                   <URLCard key={index} {...url} />
-                ))}
+                ))
+              ) : (
+                <h2 className="text-xl font-semibold text-zinc-900">
+                  Você não possui nenhuma URL cadastrada.
+                </h2>
+              )}
             </div>
           )}
         </section>
 
         <section className="w-full  gap-y-10  flex  flex-col p-8  bg-white rounded-lg shadow-md">
           <h2 className="text-2xl font-bold text-zinc-950">Relatório</h2>
-          <URLChart data={response?.urls ?? []} />
+          {hasUrls ? (
+            <URLChart data={response.urls} />
+          ) : (
+            <h2 className="text-xl font-semibold text-zinc-900">
+              Você não possui nenhuma URL cadastrada para que possar montar o
+              gráfico.
+            </h2>
+          )}
 
           <h3 className="text-zinc-950 text-base font-medium">
             Período com maior volume de acessos:{" "}
